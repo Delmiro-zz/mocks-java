@@ -5,25 +5,33 @@ import java.util.List;
 
 import br.com.caelum.leilao.dominio.Leilao;
 import br.com.caelum.leilao.infra.dao.LeilaoDao;
+import br.com.caelum.leilao.infra.email.Carteiro;
 
 public class EncerradorDeLeilao {
 
 	private int total = 0;
 	
 	private LeilaoDao leilaoDao;
+	private final Carteiro carteiro;
 	
-	public EncerradorDeLeilao(LeilaoDao leilaoDao) {
+	public EncerradorDeLeilao(LeilaoDao leilaoDao, Carteiro carteiro) {
 		this.leilaoDao = leilaoDao;
+		this.carteiro = carteiro;
 	}
 	
 	public void encerra() {
 		List<Leilao> todosLeiloesCorrentes = leilaoDao.correntes();
 
 		for (Leilao leilao : todosLeiloesCorrentes) {
-			if (comecouSemanaPassada(leilao)) {
-				leilao.encerra();
-				total++;
-				leilaoDao.atualiza(leilao);
+			try {
+				if (comecouSemanaPassada(leilao)) {
+					leilao.encerra();
+					total++;
+					leilaoDao.atualiza(leilao);
+					carteiro.envia(leilao);
+				}
+			} catch (Exception e) {
+				e.getMessage();
 			}
 		}
 	}
