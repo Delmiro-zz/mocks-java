@@ -21,8 +21,7 @@ public class LeilaoDao {
 
 	public LeilaoDao() {
 		try {
-			this.conexao = DriverManager.getConnection(
-					"jdbc:mysql://localhost/mocks", "root", "");
+			this.conexao = DriverManager.getConnection("jdbc:mysql://localhost/mocks", "root", "root");
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

@@ -17,7 +17,7 @@ public class Avaliador {
 	public void avalia(Leilao leilao) {
 		
 		if(leilao.getLances().size() == 0) {
-			throw new RuntimeException("N‹o Ž poss’vel avaliar um leil‹o sem lances!");
+			throw new RuntimeException("Não é possível avaliar um leilão sem lances!");
 		}
 		
 		for(Lance lance : leilao.getLances()) {
