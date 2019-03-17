@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -106,6 +107,23 @@ public class EncerradorDeLeilaoTest {
 		
 		verify(leilaoDao).atualiza(leilao2);
 		verify(carteiro).envia(leilao2);
+	}
+	
+	@Test
+	public void deveLancarExcecaoQuandoNaoConseguirAtualizarOsLeiloes() {
+		Calendar ontem = Calendar.getInstance();
+		ontem.set(1999, 1 , 10);
+		
+		Leilao leilao1 = new CriadorDeLeilao().para("TV de plasma").naData(ontem).constroi();
+		Leilao leilao2 = new CriadorDeLeilao().para("Geladeira").naData(ontem).constroi();
+		
+		LeilaoDao leilaoDao = mock(LeilaoDao.class);
+		
+		when(leilaoDao.correntes()).thenReturn(Arrays.asList(leilao1, leilao2));
+		doThrow(new RuntimeException()).when(leilaoDao).atualiza(leilao1);
+		doThrow(new RuntimeException()).when(leilaoDao).atualiza(leilao2);
+		
+		verify(leilaoDao, never()).atualiza(any(Leilao.class));
 	}
 	
 }
