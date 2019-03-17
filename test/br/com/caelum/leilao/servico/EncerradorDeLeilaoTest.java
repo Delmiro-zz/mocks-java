@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -36,6 +37,22 @@ public class EncerradorDeLeilaoTest {
 		assertEquals(2 , encerrador.getTotalEncerrados());
 		assertTrue(leilao1.isEncerrado());
 		assertTrue(leilao2.isEncerrado());
+	}
+	
+	@Test
+	public void deveAtualizarLeiloesEncerrados() {
+		Calendar dataAntiga = Calendar.getInstance();
+		dataAntiga.set(1999, 1, 20);
+		
+		Leilao leilao1 = new CriadorDeLeilao().para("TV Samsung 65").naData(dataAntiga).constroi();
+		
+		LeilaoDao dao = mock(LeilaoDao.class);
+		when(dao.correntes()).thenReturn(Arrays.asList(leilao1));
+		
+		EncerradorDeLeilao encerrador = new EncerradorDeLeilao(dao);
+		encerrador.encerra();
+		
+		verify(dao).atualiza(leilao1);
 	}
 	
 }
